@@ -57,8 +57,8 @@ export async function GET(req) {
       iconUrl,
       // se quiser considerar MANAGE_GUILD como admin:
       manageGuild: !!(perms & (1 << 5)),
-      guildConfigExists: configurationDb.some((server) => server.server_id == g.id),
-      guildSetupExists: setupDb.some((server) => server.server_id == g.id),
+      config: configurationDb.some((server) => server.server_id == g.id),
+      setup: setupDb.some((server) => server.server_id == g.id),
     }
 
     return guildObject;

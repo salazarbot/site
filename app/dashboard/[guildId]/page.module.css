@@ -3,4 +3,8 @@
   width: 100dvw;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 600px) {
+    height: unset;
+  }
 }

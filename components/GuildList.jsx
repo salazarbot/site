@@ -29,9 +29,9 @@ export default function GuildList() {
     <ul className={styles.guildList}>
       {guilds
       .sort((a, b) => a.name.localeCompare(b.name))
-      .sort((a, b) => b.guildConfigExists - a.guildConfigExists)
+      .sort((a, b) => b.config - a.config)
       .filter(g => (g.owner || g.isAdmin || g.manageGuild)).map(g => (
-        <Link key={g.id} className={`${!g.guildConfigExists && styles.disabled} ${styles.guild}`} href={g.guildConfigExists ? `/dashboard/${g.id}` : `https://discord.com/oauth2/authorize?client_id=767858186676994070`}>
+        <Link key={g.id} className={`${!g.config && styles.disabled} ${styles.guild}`} href={g.config ? `/dashboard/${g.id}` : `https://discord.com/oauth2/authorize?client_id=767858186676994070`}>
           {g.iconUrl ? (
             <img src={g.iconUrl} className={styles.guildIcon} alt={`Ícone de ${g.name}`} width={32} height={32} />
           ) : (

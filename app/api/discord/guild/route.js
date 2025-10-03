@@ -54,8 +54,8 @@ export async function GET(req) {
     isAdmin: !!(parseInt(guild.permissions || "0", 10) & (1 << 3)),
     manageGuild: !!(parseInt(guild.permissions || "0", 10) & (1 << 5)),
     iconUrl,
-    guildConfigExists: typeof configurationDb !== "undefined",
-    guildSetupExists: typeof setupDb !== "undefined",
+    config: configurationDb,
+    setup: setupDb,
   }), {
     headers: { "Content-Type": "application/json" },
   })
