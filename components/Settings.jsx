@@ -7,7 +7,7 @@ import LoadingWheel from "./LoadingWheel";
 import Image from "next/image";
 
 function TabSelector({ selected, onSelect, guildId, guild }) {
-  const tabs = ["Geral", "Notificações", "Permissões"]
+  const tabs = ["Geral", "Canais", "Cargos"]
 
   const navRef = useRef(null);
 
@@ -17,7 +17,7 @@ function TabSelector({ selected, onSelect, guildId, guild }) {
         <Image src={guild.iconUrl} width={50} height={50} alt={`Ícone de ${guild.name}`} />
         <h1>{guild.name}</h1>
       </section>
-      
+
       {tabs.map(tab => (
         <button
           key={tab}
@@ -42,17 +42,25 @@ function SettingsContent({ selected, guildId, guild }) {
     case "Geral": {
       return (
         <div className={styles.config}>
-          <h2>Configurações Gerais</h2>
-          {guild?.config?.server?.name}
-          <label>
-            <input type="checkbox" id="dark" /> Ativar modo escuro
-          </label>
+          <h1>Configurações Gerais</h1>
+
+          <label htmlFor="name">Nome do servidor</label>
+          <input type="text" name="name" id="name" defaultValue={guild?.config?.server?.name}/>
+
+          <label htmlFor="extra_prompt">Prompt adicional</label>
+          <textarea name="extra_prompt" id="extra_prompt" defaultValue={guild?.config?.server?.preferences?.extra_prompt} />
+
+          <label htmlFor="action_timing">Segundos para enviar partes da ação</label>
+          <input type="number" name="action_timing" id="action_timing" defaultValue={guild?.config?.server?.preferences?.action_timing} />
+
+          <label htmlFor="global_palpites">Responder jogadores com IA</label>
+          <input type="checkbox" name="global_palpites" id="global_palpites" defaultValue={guild?.config?.server?.preferences?.global_palpites} />
         </div>
       )
       break;
     };
 
-    case "Notificações": {
+    case "Canais": {
       return (
         <div className={styles.config}>
           <h2>Configurações de Notificações</h2>
@@ -62,9 +70,9 @@ function SettingsContent({ selected, guildId, guild }) {
         </div>
       )
       break;
-    }
+    };
 
-    case "Permissões": {
+    case "Cargos": {
       return (
         <div className={styles.config}>
           <h2>Permissões</h2>
@@ -74,7 +82,7 @@ function SettingsContent({ selected, guildId, guild }) {
         </div>
       )
       break;
-    }
+    };
 
     default:
       break;
