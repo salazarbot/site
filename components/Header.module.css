@@ -1,0 +1,124 @@
+.header {
+    display: flex;
+    width: 100dvw;
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    line-height: 1;
+    color: white;
+    z-index: 10;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+
+    .mobileOnly {
+        display: none !important;
+    }
+
+    @media (max-width: 600px) {
+        top: unset;
+        position: fixed;
+        bottom: 0;
+        margin: 10px;
+        border-radius: 24px;
+        border: 1px solid rgba(255,255,255,9%);
+        width: calc(100dvw - 20px);
+        padding: 0;
+
+        .pcOnly {
+            display: none !important;
+        }
+
+        .mobileOnly {
+            display: flex !important;
+        }
+    }
+
+    img {
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        h1 {
+            margin: 0;
+        }
+
+        @media (max-width: 600px) {
+            display: none;
+        }
+    }
+
+    .nav {
+        display: flex;
+        gap: 20px;
+
+        @media (max-width: 600px) {
+            gap: 0;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .section {
+            @media (max-width: 600px) {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-size: 10px !important;
+                gap: 8px;
+                padding: 8px 12px;
+                border-radius: 24px;
+                width: 25%;
+                border: 1px solid transparent;
+                cursor: pointer;
+                transition: 0.2s ease-in-out;
+
+                img {
+                    width: 32px;
+                    height: 32px;
+                }
+            }
+        }
+
+        .section:hover {
+            text-decoration: underline;
+
+            @media (max-width: 600px) {
+                text-decoration: none;
+                background: rgba(255,255,255,10%);
+                border: 1px solid rgba(255,255,255,9%);
+
+                .icon {
+                    color: white;
+                }
+            }
+        }
+
+        .icon {
+            display: none;
+            transition: 0.2s ease-in-out;
+
+            @media (max-width: 600px) {
+                display: block;
+                color: rgba(255, 255, 255, 0.544);
+            }
+        }
+    }
+
+    .auth {
+        img {
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            /*display: none;*/
+        }
+    }
+}
