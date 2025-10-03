@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from "react"
 import styles from "./Settings.module.css"
 import GuildInfo from "./GuildInfo"
 import { HiChevronRight } from "react-icons/hi";
+import LoadingWheel from "./LoadingWheel";
+import Image from "next/image";
 
 function TabSelector({ selected, onSelect, guildId, guild }) {
   const tabs = ["Geral", "Notificações", "Permissões"]
@@ -12,7 +14,10 @@ function TabSelector({ selected, onSelect, guildId, guild }) {
 
   return (
     <div className={styles.nav} ref={navRef}>
-      <GuildInfo guildId={guildId} />
+      <section className={styles.guildInfo}>
+        <Image src={guild.iconUrl} width={50} height={50} />
+        <h1>{guild.name}</h1>
+      </section>
       {tabs.map(tab => (
         <button
           key={tab}
@@ -90,6 +95,8 @@ export default function Settings({ guildId }) {
       .catch(err => setError(err))
       .finally(() => setLoading(false))
   }, [guildId]);
+
+  if(!guild) return <div className={styles.loading}><LoadingWheel /></div>
 
   return (
     <div className={styles.dashboard}>
