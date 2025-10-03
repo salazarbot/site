@@ -10,7 +10,7 @@ export default async function Dashboard({ params }) {
   return (
     <div className={styles.body}>
       <Header />
-      <Settings />
+      <Settings guildId={guildId} />
     </div>
   );
 }

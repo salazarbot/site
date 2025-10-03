@@ -4,6 +4,13 @@
     width: 100%;
     flex-grow: 1;
 
+    .active {
+      left: 0 !important;
+    }
+    .rotated {
+      rotate: 180deg;
+    }
+
     .nav {
       backdrop-filter: blur(5px);
       height: 100%;
@@ -13,11 +20,50 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      transition: 0.2s ease-in-out;
 
       button {
         border-radius: 8px;
         padding: 8px;
         cursor: pointer;
+        background: none;
+        color: white;
+        font-family: monospace;
+        transition: 0.2s ease-in-out;
+        border: 1px solid transparent;
+      }
+      button:hover {
+        background: rgba(255, 255, 255, 0.208);
+        border: 1px solid rgba(255, 255, 255, 0.145);
+      }
+
+      .selected {
+        background: rgba(255, 255, 255, 0.208);
+        border: 1px solid rgba(255, 255, 255, 0.145);
+      }
+
+      @media (max-width: 600px) {
+        position: fixed;
+        top: 0;
+        left: -250px;
+      }
+
+      .mobileOpen {
+        display: none;
+
+        @media (max-width: 600px) {
+          display: block;
+          position: absolute;
+          top: 50%;
+          right: -35px;
+          padding: 4px;
+          background: rgba(255, 255, 255, 0.142);
+          border: 1px solid rgba(255, 255, 255, 0.229);
+          cursor: pointer;
+          border-radius: 12px;
+          transition: 0.2s ease-in-out;
+          color: rgba(255, 255, 255, 0.825);
+        }
       }
     }
 
