@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react"
 import styles from "./Settings.module.css"
-import GuildInfo from "./GuildInfo"
 import { HiChevronRight } from "react-icons/hi";
 import LoadingWheel from "./LoadingWheel";
 import Image from "next/image";
@@ -15,9 +14,10 @@ function TabSelector({ selected, onSelect, guildId, guild }) {
   return (
     <div className={styles.nav} ref={navRef}>
       <section className={styles.guildInfo}>
-        <Image src={guild.iconUrl} width={50} height={50} />
+        <Image src={guild.iconUrl} width={50} height={50} alt={`Ícone de ${guild.name}`} />
         <h1>{guild.name}</h1>
       </section>
+      
       {tabs.map(tab => (
         <button
           key={tab}
@@ -36,38 +36,48 @@ function TabSelector({ selected, onSelect, guildId, guild }) {
 }
 
 function SettingsContent({ selected, guildId, guild }) {
-  if (selected === "Geral") {
-    return (
-      <div className={styles.config}>
-        <h2>Configurações Gerais</h2>
-        {guild?.config?.server?.name}
-        <label>
-          <input type="checkbox" id="dark" /> Ativar modo escuro
-        </label>
-      </div>
-    )
-  }
 
-  if (selected === "Notificações") {
-    return (
-      <div className={styles.config}>
-        <h2>Configurações de Notificações</h2>
-        <label>
-          <input type="checkbox" id="email" /> Receber notificações por email
-        </label>
-      </div>
-    )
-  }
+  switch (selected) {
 
-  if (selected === "Permissões") {
-    return (
-      <div className={styles.config}>
-        <h2>Permissões</h2>
-        <label>
-          <input type="checkbox" id="nv" /> Permitir convites
-        </label>
-      </div>
-    )
+    case "Geral": {
+      return (
+        <div className={styles.config}>
+          <h2>Configurações Gerais</h2>
+          {guild?.config?.server?.name}
+          <label>
+            <input type="checkbox" id="dark" /> Ativar modo escuro
+          </label>
+        </div>
+      )
+      break;
+    };
+
+    case "Notificações": {
+      return (
+        <div className={styles.config}>
+          <h2>Configurações de Notificações</h2>
+          <label>
+            <input type="checkbox" id="email" /> Receber notificações por email
+          </label>
+        </div>
+      )
+      break;
+    }
+
+    case "Permissões": {
+      return (
+        <div className={styles.config}>
+          <h2>Permissões</h2>
+          <label>
+            <input type="checkbox" id="nv" /> Permitir convites
+          </label>
+        </div>
+      )
+      break;
+    }
+
+    default:
+      break;
   }
 
   return <p>Selecione uma aba</p>
@@ -96,11 +106,11 @@ export default function Settings({ guildId }) {
       .finally(() => setLoading(false))
   }, [guildId]);
 
-  if(!guild) return <div className={styles.loading}><LoadingWheel /></div>
+  if (!guild) return <div className={styles.loading}><LoadingWheel /></div>
 
   return (
     <div className={styles.dashboard}>
-      <TabSelector selected={selectedTab} onSelect={setSelectedTab} guildId={guild?.id  || guildId} guild={guild} />
+      <TabSelector selected={selectedTab} onSelect={setSelectedTab} guildId={guild?.id || guildId} guild={guild} />
       <SettingsContent selected={selectedTab} guildId={guild?.id || guildId} guild={guild} />
     </div>
   )

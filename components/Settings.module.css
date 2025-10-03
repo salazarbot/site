@@ -48,6 +48,7 @@
         font-family: monospace;
         transition: 0.2s ease-in-out;
         border: 1px solid transparent;
+        text-align: left;
       }
       button:hover {
         background: rgba(255, 255, 255, 0.208);
