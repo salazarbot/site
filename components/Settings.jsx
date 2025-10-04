@@ -7,7 +7,7 @@ import LoadingWheel from "./LoadingWheel";
 import Image from "next/image";
 
 function TabSelector({ selected, onSelect, guildId, guild }) {
-  const tabs = ["Geral", "Canais", "Cargos"]
+  const tabs = ["Preferências", "Administração", "Cargos", "Inteligência Artificial", "Passagem de tempo", "Roleplay", "Diplomacia e NPCs", "Ações secretas", "Escolha de países"]
 
   const navRef = useRef(null);
 
@@ -39,34 +39,73 @@ function SettingsContent({ selected, guildId, guild }) {
 
   switch (selected) {
 
-    case "Geral": {
+    case "Preferências": {
       return (
         <div className={styles.config}>
-          <h1>Configurações Gerais</h1>
+          <h1>{selected}</h1>
 
-          <label htmlFor="name">Nome do servidor</label>
-          <input type="text" name="name" id="name" defaultValue={guild?.config?.server?.name}/>
+          <section>
+            <h2>Configuração geral</h2>
 
-          <label htmlFor="extra_prompt">Prompt adicional</label>
-          <textarea name="extra_prompt" id="extra_prompt" defaultValue={guild?.config?.server?.preferences?.extra_prompt} />
+            <div className={styles.option}>
+              <label htmlFor="name">Nome do servidor</label>
+              <p>{'Se você usar {ano} em alguma parte do nome, o Salazar atualizará o nome do servidor toda vez que o ano do roleplay for passado.'}</p>
+              <input type="text" name="name" id="name" defaultValue={guild?.config?.server?.name}/>
+            </div>
 
-          <label htmlFor="action_timing">Segundos para enviar partes da ação</label>
-          <input type="number" name="action_timing" id="action_timing" defaultValue={guild?.config?.server?.preferences?.action_timing} />
+            <div className={styles.option}>
+              <label htmlFor="extra_prompt">Prompt adicional</label>
+              <p>Caso você queira algum detalhe ou especificação extra nas narrações do seu servidor.</p>
+              <textarea name="extra_prompt" id="extra_prompt" defaultValue={guild?.config?.server?.preferences?.extra_prompt} placeholder="Ex.: Penalize o jogador e realce os resultados negativos das suas ações (caso você queira priorizar narração humana e usar o Salazar para agilidade mas com desvantagem)."/>
+            </div>
+          </section>
 
-          <label htmlFor="global_palpites">Responder jogadores com IA</label>
-          <input type="checkbox" name="global_palpites" id="global_palpites" defaultValue={guild?.config?.server?.preferences?.global_palpites} />
+          <section>
+            <h2>Definições de tempo e tamanho</h2>
+
+            <div className={styles.option}>
+              <label htmlFor="action_timing">Segundos para enviar partes da ação</label>
+              <p>O tempo em que o Salazar esperará (em segundos) para que o jogador envie todas as mensagens que comporão sua ação.</p>
+              <input type="number" name="action_timing" id="action_timing" defaultValue={guild?.config?.server?.preferences?.action_timing} />
+            </div>
+
+            <div className={styles.option}>
+              <label htmlFor="min_event_length">Mínimo de caracteres de evento</label>
+              <p>Mínimo de caracteres de uma mensagem de narrador em canal de evento para que o Salazar a armazene em sua memória como um evento.</p>
+              <input type="number" name="min_event_length" id="min_event_length" defaultValue={guild?.config?.server?.preferences?.min_event_length} />
+            </div>
+
+            <div className={styles.option}>
+              <label htmlFor="min_action_length">Mínimo de caracteres de ação</label>
+              <p>Mínimo de caracteres de uma mensagem de jogador em canal de ação para que o Salazar a identifique como uma ação e narre seus resultados.</p>
+              <input type="number" name="min_action_length" id="min_action_length" defaultValue={guild?.config?.server?.preferences?.min_action_length} />
+            </div>
+
+            <div className={styles.option}>
+              <label htmlFor="min_diplomacy_length">Mínimo de caracteres de diplomacia</label>
+              <p>Mínimo de caracteres de uma mensagem de jogador no canal de diplomacia para que o Salazar a leia e tente interpretar seus resultados para simular resposta de um país NPC, criar chat de guerra, etc.</p>
+              <input type="number" name="min_diplomacy_length" id="min_diplomacy_length" defaultValue={guild?.config?.server?.preferences?.min_diplomacy_length} />
+            </div>
+
+            <div className={styles.option}>
+              <label htmlFor="action_keyword">Palavra-chave que identifica ações</label>
+              <p>Palavra-chave que caso a mensagem enviada em um canal de ações contenha, o Salazar irá tentar narrá-la mesmo se ela não atingir o mínimo de caracteres.</p>
+              <input type="text" name="action_keyword" id="action_keyword" defaultValue={guild?.config?.server?.preferences?.action_keyword} />
+            </div>
+          </section>
+
+          <section>
+            <button className={styles.saveButton}>Salvar</button>
+          </section>
         </div>
       )
       break;
     };
 
-    case "Canais": {
+    case "Administração": {
       return (
         <div className={styles.config}>
-          <h2>Configurações de Notificações</h2>
-          <label>
-            <input type="checkbox" id="email" /> Receber notificações por email
-          </label>
+          <h1>{selected}</h1>
         </div>
       )
       break;
@@ -75,14 +114,65 @@ function SettingsContent({ selected, guildId, guild }) {
     case "Cargos": {
       return (
         <div className={styles.config}>
-          <h2>Permissões</h2>
-          <label>
-            <input type="checkbox" id="nv" /> Permitir convites
-          </label>
+          <h1>{selected}</h1>
         </div>
       )
       break;
     };
+
+    case "Inteligência Artificial": {
+      return (
+        <div className={styles.config}>
+          <h1>{selected}</h1>
+        </div>
+      )
+      break;
+    };
+
+    case "Passagem de tempo": {
+      return (
+        <div className={styles.config}>
+          <h1>{selected}</h1>
+        </div>
+      )
+      break;
+    };
+
+    case "Roleplay": {
+      return (
+        <div className={styles.config}>
+          <h1>{selected}</h1>
+        </div>
+      )
+      break;
+    };
+
+    case "Diplomacia e NPCs": {
+      return (
+        <div className={styles.config}>
+          <h1>{selected}</h1>
+        </div>
+      )
+      break;
+    };
+
+    case "Ações secretas": {
+      return (
+        <div className={styles.config}>
+          <h1>{selected}</h1>
+        </div>
+      )
+      break;
+    };
+
+    case "Escolha de países": {
+      return (
+        <div className={styles.config}>
+          <h1>{selected}</h1>
+        </div>
+      )
+      break;
+    }
 
     default:
       break;
@@ -92,7 +182,7 @@ function SettingsContent({ selected, guildId, guild }) {
 }
 
 export default function Settings({ guildId }) {
-  const [selectedTab, setSelectedTab] = useState("Geral")
+  const [selectedTab, setSelectedTab] = useState("Preferências")
   const [guild, setGuild] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)

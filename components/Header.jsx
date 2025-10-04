@@ -34,13 +34,13 @@ export default function Header() {
             </span>
           </Link>
         }
-        <Link className={styles.section} href="tos">
+        <Link className={styles.section} href="/tos">
           <FaBook size={32} className={styles.icon} />
           <span className={styles.label}>
             TOS
           </span>
         </Link>
-        <Link className={styles.section} href="privacy">
+        <Link className={styles.section} href="/privacy">
           <FaLock size={32} className={styles.icon} />
           <span className={styles.label}>
             Privacidade
