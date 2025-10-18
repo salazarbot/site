@@ -31,7 +31,7 @@ function TabSelector({ selected, onSelect, guildId, guild }) {
       ))}
       <HiChevronRight className={styles.mobileOpen} size={32} onClick={(ev) => {
         navRef?.current?.classList.toggle(styles.active);
-        ev.target.classList.toggle(styles.rotated)
+        ev.currentTarget.classList.toggle(styles.rotated)
       }} />
     </div>
   )
