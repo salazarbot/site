@@ -231,7 +231,7 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
 
         <div className={styles.option}>
           <label htmlFor="preferences.global_palpites">Responder jogadores com IA <input type="checkbox" name="preferences.global_palpites" id="preferences.global_palpites" defaultChecked={guild?.config?.server?.preferences?.global_palpites} /></label>
-          <p>O Salazar usará um modelo mais fraco para responder com IA a qualquer jogador que o mencionar.</p>
+          <p>O Salazar responderá com IA a qualquer jogador que o mencionar, de forma similar ao comando /palpite. No entanto, ele usará um modelo mais fraco.</p>
         </div>
       </section>
 
