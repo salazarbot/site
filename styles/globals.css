@@ -29,7 +29,7 @@ body::before {
   height: 100dvh;
   background-image: url('/cursodoimperio.png');
   background-size: cover;
-  background-position: top;
+  background-position: top right;
   z-index: -1;
 }
 
