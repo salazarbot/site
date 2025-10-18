@@ -408,7 +408,7 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
 
         <div className={styles.option}>
           <label htmlFor="channels.picked_countries">Canal de países escolhidos</label>
-          <p>Canal onde os países que possuem jogadores são inFormados. Mais de uma pessoa podem controlar o mesmo país.</p>
+          <p>Canal onde os países que possuem jogadores são informados. Mais de uma pessoa podem controlar o mesmo país.</p>
           <select name="channels.picked_countries" id="channels.picked_countries" defaultValue={guild?.config?.server?.channels?.picked_countries || 'undefined'}>
             <option value="undefined">Nenhum canal</option>
             {guildChannels.filter(c => c.type == 0).map(c => {
