@@ -30,6 +30,7 @@ body::before {
   background-image: url('/cursodoimperio.png');
   background-size: cover;
   background-position: top right;
+  background-repeat: repeat;
   z-index: -1;
 }
 
