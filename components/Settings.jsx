@@ -6,6 +6,7 @@ import { HiChevronRight } from "react-icons/hi";
 import LoadingWheel from "./LoadingWheel";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+import Form from "next/form";
 
 function TabSelector({ selected, onSelect, guildId, guild }) {
   const tabs = ["Preferências", "Administração", "Cargos", "Inteligência Artificial", "Passagem de tempo", "Roleplay", "Diplomacia e NPCs", "Ações secretas", "Escolha de países"]
@@ -36,10 +37,70 @@ function TabSelector({ selected, onSelect, guildId, guild }) {
   )
 }
 
+/**
+ * @param {import("react").FormEvent<HTMLFormElement>} event 
+ */
+function sendForm(event, guildId) {
+  event.preventDefault();
+
+  const formData = new FormData(event.currentTarget);
+  const data = {};
+
+  // Processa todos os campos
+  for (const [key, value] of formData.entries()) {
+    // Se a chave já existe, transforma em array (para selects múltiplos)
+    if (data[key]) {
+      if (Array.isArray(data[key])) {
+        data[key].push(value);
+      } else {
+        data[key] = [data[key], value];
+      }
+    } else {
+      data[key] = value;
+    }
+  }
+
+  // Processa checkboxes: converte "on" para true, ausentes para false
+  const form = event.currentTarget;
+  const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+  
+  checkboxes.forEach(checkbox => {
+    if (checkbox.name) {
+      data[checkbox.name] = checkbox.checked; // true ou false
+    }
+  });
+
+  console.log('📤 Dados a enviar:', data);
+
+  fetch("/api/save_config", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ 
+      guildId,
+      data
+    })
+  })
+    .then(r => {
+      if (!r.ok) throw r
+      return r.json()
+    })
+    .then(result => {
+      console.log('✅ Salvo:', result);
+      alert('Configurações salvas com sucesso!');
+      location.reload();
+    })
+    .catch((e) => {
+      console.error('❌ Erro ao salvar:', e);
+      alert(`Erro ao salvar configurações`);
+    });
+}
+
 function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }) {
 
   const pages = {
-    "Preferências": <div className={styles.config} key={'preferencias'}>
+    "Preferências": <Form className={styles.config} key={'preferencias'} onSubmit={(e) => sendForm(e, guildId)}>
       <h1>{selected}</h1>
 
       <section>
@@ -48,7 +109,7 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
         <div className={styles.option}>
           <label htmlFor="name">Nome do servidor</label>
           <p>{'Se você usar {ano} em alguma parte do nome, o Salazar atualizará o nome do servidor toda vez que o ano do roleplay for passado.'}</p>
-          <input type="text" name="name" id="name" defaultValue={guild?.config?.server?.name} />
+          <input type="text" name="name" id="name" defaultValue={guild?.config?.server?.name} required />
         </div>
 
         <div className={styles.option}>
@@ -64,39 +125,39 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
         <div className={styles.option}>
           <label htmlFor="preferences.action_timing">Segundos para enviar partes da ação</label>
           <p>O tempo em que o Salazar esperará (em segundos) para que o jogador envie todas as mensagens que comporão sua ação.</p>
-          <input type="number" name="preferences.action_timing" id="preferences.action_timing" defaultValue={guild?.config?.server?.preferences?.action_timing} />
+          <input type="number" name="preferences.action_timing" id="preferences.action_timing" defaultValue={guild?.config?.server?.preferences?.action_timing} placeholder="20" />
         </div>
 
         <div className={styles.option}>
           <label htmlFor="preferences.min_event_length">Mínimo de caracteres de evento</label>
           <p>Mínimo de caracteres de uma mensagem de narrador em canal de evento para que o Salazar a armazene em sua memória como um evento.</p>
-          <input type="number" name="preferences.min_event_length" id="preferences.min_event_length" defaultValue={guild?.config?.server?.preferences?.min_event_length} />
+          <input type="number" name="preferences.min_event_length" id="preferences.min_event_length" defaultValue={guild?.config?.server?.preferences?.min_event_length} placeholder="256" />
         </div>
 
         <div className={styles.option}>
           <label htmlFor="preferences.min_action_length">Mínimo de caracteres de ação</label>
           <p>Mínimo de caracteres de uma mensagem de jogador em canal de ação para que o Salazar a identifique como uma ação e narre seus resultados.</p>
-          <input type="number" name="preferences.min_action_length" id="preferences.min_action_length" defaultValue={guild?.config?.server?.preferences?.min_action_length} />
+          <input type="number" name="preferences.min_action_length" id="preferences.min_action_length" defaultValue={guild?.config?.server?.preferences?.min_action_length} placeholder="500" />
         </div>
 
         <div className={styles.option}>
           <label htmlFor="preferences.min_diplomacy_length">Mínimo de caracteres de diplomacia</label>
           <p>Mínimo de caracteres de uma mensagem de jogador no canal de diplomacia para que o Salazar a leia e tente interpretar seus resultados para simular resposta de um país NPC, criar chat de guerra, etc.</p>
-          <input type="number" name="preferences.min_diplomacy_length" id="preferences.min_diplomacy_length" defaultValue={guild?.config?.server?.preferences?.min_diplomacy_length} />
+          <input type="number" name="preferences.min_diplomacy_length" id="preferences.min_diplomacy_length" defaultValue={guild?.config?.server?.preferences?.min_diplomacy_length} placeholder="200" />
         </div>
 
         <div className={styles.option}>
           <label htmlFor="preferences.action_keyword">Palavra-chave que identifica ações</label>
           <p>Palavra-chave que caso a mensagem enviada em um canal de ações contenha, o Salazar irá tentar narrá-la mesmo se ela não atingir o mínimo de caracteres.</p>
-          <input type="text" name="preferences.action_keyword" id="preferences.action_keyword" defaultValue={guild?.config?.server?.preferences?.action_keyword} />
+          <input type="text" name="preferences.action_keyword" id="preferences.action_keyword" defaultValue={guild?.config?.server?.preferences?.action_keyword} placeholder="acao" />
         </div>
       </section>
 
       <section>
-        <button className={styles.saveButton}>Salvar</button>
+        <button className={styles.saveButton} type="submit">Salvar</button>
       </section>
-    </div>,
-    "Administração": <div className={styles.config} key={'administracao'}>
+    </Form>,
+    "Administração": <Form className={styles.config} key={'administracao'} onSubmit={(e) => sendForm(e, guildId)}>
       <h1>{selected}</h1>
 
       <section>
@@ -122,10 +183,10 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
       </section>
 
       <section>
-        <button className={styles.saveButton}>Salvar</button>
+        <button className={styles.saveButton} type="submit">Salvar</button>
       </section>
-    </div>,
-    "Cargos": <div className={styles.config} key={'cargos'}>
+    </Form>,
+    "Cargos": <Form className={styles.config} key={'cargos'} onSubmit={(e) => sendForm(e, guildId)}>
       <h1>{selected}</h1>
 
       <section>
@@ -151,10 +212,10 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
       </section>
 
       <section>
-        <button className={styles.saveButton}>Salvar</button>
+        <button className={styles.saveButton} type="submit">Salvar</button>
       </section>
-    </div>,
-    "Inteligência Artificial": <div className={styles.config} key={'inteligenciaArtificial'}>
+    </Form>,
+    "Inteligência Artificial": <Form className={styles.config} key={'inteligenciaArtificial'} onSubmit={(e) => sendForm(e, guildId)}>
       <h1>{selected}</h1>
 
       <section>
@@ -175,10 +236,10 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
       </section>
 
       <section>
-        <button className={styles.saveButton}>Salvar</button>
+        <button className={styles.saveButton} type="submit">Salvar</button>
       </section>
-    </div>,
-    "Passagem de tempo": <div className={styles.config} key={'passagemDeTempo'}>
+    </Form>,
+    "Passagem de tempo": <Form className={styles.config} key={'passagemDeTempo'} onSubmit={(e) => sendForm(e, guildId)}>
       <h1>{selected}</h1>
       <p>A passagem de tempo automática do Salazar é opcional, e você pode optar por passar anos apenas manualmente: basta não definir os dias para passar o ano.</p>
 
@@ -201,10 +262,10 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
       </section>
 
       <section>
-        <button className={styles.saveButton}>Salvar</button>
+        <button className={styles.saveButton} type="submit">Salvar</button>
       </section>
-    </div>,
-    "Roleplay": <div className={styles.config} key={'roleplay'}>
+    </Form>,
+    "Roleplay": <Form className={styles.config} key={'roleplay'} onSubmit={(e) => sendForm(e, guildId)}>
       <h1>{selected}</h1>
 
       <section>
@@ -251,10 +312,10 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
       </section>
 
       <section>
-        <button className={styles.saveButton}>Salvar</button>
+        <button className={styles.saveButton} type="submit">Salvar</button>
       </section>
-    </div>,
-    "Diplomacia e NPCs": <div className={styles.config} key={'diplomaciaENpcs'}>
+    </Form>,
+    "Diplomacia e NPCs": <Form className={styles.config} key={'diplomaciaENpcs'} onSubmit={(e) => sendForm(e, guildId)}>
       <h1>{selected}</h1>
       <p>As funções diplomáticas são opcionais e podem ser desativadas, bastando não definir o canal da função.</p>
 
@@ -283,10 +344,10 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
       </section>
 
       <section>
-        <button className={styles.saveButton}>Salvar</button>
+        <button className={styles.saveButton} type="submit">Salvar</button>
       </section>
-    </div>,
-    "Ações secretas": <div className={styles.config} key={'acoesSecretas'}>
+    </Form>,
+    "Ações secretas": <Form className={styles.config} key={'acoesSecretas'} onSubmit={(e) => sendForm(e, guildId)}>
       <h1>{selected}</h1>
       <p>Feature opcional para caso seu servidor não tenha canais privados de países e você queira uma alternativa para fazer ações secretas. Se você não quiser a usar, não defina os canais.</p>
 
@@ -315,10 +376,10 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
       </section>
 
       <section>
-        <button className={styles.saveButton}>Salvar</button>
+        <button className={styles.saveButton} type="submit">Salvar</button>
       </section>
-    </div>,
-    "Escolha de países": <div className={styles.config} key={'escolhaDePaises'}>
+    </Form>,
+    "Escolha de países": <Form className={styles.config} key={'escolhaDePaises'} onSubmit={(e) => sendForm(e, guildId)}>
       <h1>{selected}</h1>
       <p>Feature opcional que automatiza a escolha de países, criação de chats privados, cargos e emojis. Se você não quiser usar, não defina nenhum dos canais. Se quiser, tem que definir todos.</p>
 
@@ -347,7 +408,7 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
 
         <div className={styles.option}>
           <label htmlFor="channels.picked_countries">Canal de países escolhidos</label>
-          <p>Canal onde os países que possuem jogadores são informados. Mais de uma pessoa podem controlar o mesmo país.</p>
+          <p>Canal onde os países que possuem jogadores são inFormados. Mais de uma pessoa podem controlar o mesmo país.</p>
           <select name="channels.picked_countries" id="channels.picked_countries" defaultValue={guild?.config?.server?.channels?.picked_countries || 'undefined'}>
             <option value="undefined">Nenhum canal</option>
             {guildChannels.filter(c => c.type == 0).map(c => {
@@ -358,9 +419,9 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
       </section>
 
       <section>
-        <button className={styles.saveButton}>Salvar</button>
+        <button className={styles.saveButton} type="submit">Salvar</button>
       </section>
-    </div>,
+    </Form>,
   }
 
   return pages[selected] || <p>Selecione uma aba</p>
