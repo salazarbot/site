@@ -1,5 +1,108 @@
 .main {
-  padding: 20px;
   display: flex;
   flex-direction: column;
+  scroll-snap-type: y proximity;
+  height: calc(100dvh - 74px);
+  overflow-y: auto;
+
+  .section {
+    scroll-snap-align: start;
+    min-height: calc(100dvh - 74px);
+    max-height: max-content;
+    padding: 10px;
+  }
+
+  .section1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+
+    .title {
+      h1, h2 {
+        font-size: 1.5rem;
+      }
+
+      h1 {
+        background-image: linear-gradient(to right, #07ffe2, #a642af);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+    }
+
+    .description {
+      color: rgba(255, 255, 255, 0.839);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+
+      a {
+        padding: 16px;
+        background-color: rgba(255, 255, 255, 0.089);
+        border: 1px solid rgba(255, 255, 255, 0.245);
+        border-radius: 99px;
+        transition: 0.2s ease-in-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        backdrop-filter: blur(5px);
+      }
+      a:hover {
+        scale: 1.05;
+      }
+
+      .primary {
+        background: linear-gradient(185deg, #5865F2, #3948f0);
+        filter: drop-shadow(0, 0, 4px, #5865F2);
+      }
+    }
+  }
+
+  .section2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    
+    .title {
+      text-align: center;
+
+      p {
+        color: rgba(255, 255, 255, 0.839);
+      }
+    }
+
+    .features {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      max-width: 608px;
+      height: fit-content;
+
+      .card {
+        padding: 10px;
+        background-color: rgba(255, 255, 255, 0.156);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.356);
+        backdrop-filter: blur(15px);
+        
+        .icon {
+
+        }
+        .title {
+
+        }
+        .description {
+
+        }
+      }
+    }
+  }
 }
