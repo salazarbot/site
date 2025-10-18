@@ -9,7 +9,7 @@ export const viewport = {
   height: "device-height",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#393939ff",
+  themeColor: "transparent",
 }
 
 export const metadata = {
@@ -19,6 +19,11 @@ export const metadata = {
   authors: ['Renato'],
   generator: "Next.js",
   keywords: ['nextjs', 'salazar', 'bot', 'discord', 'dashboard'],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Salazar'
+  }
 };
 
 export default function RootLayout({ children }) {
