@@ -93,7 +93,15 @@ export default function Header() {
             <Image src={session.user.image} alt="User Avatar" width={50} height={50} />
           </Tippy>
         ) : (
-          <FaUser size={50} style={{ color: 'white', cursor: 'pointer', padding: '10px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.1)' }} onClick={() => signIn('discord')} />
+          <Tippy
+            animation="scale-extreme"
+            arrow={false}
+            trigger="mouseenter"
+            interactive={false}
+            content={"Entrar com Discord"}
+          >
+            <FaUser size={50} style={{ color: 'white', cursor: 'pointer', padding: '10px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.1)' }} onClick={() => signIn('discord')} />
+          </Tippy>
         )}
       </nav>
     </header>

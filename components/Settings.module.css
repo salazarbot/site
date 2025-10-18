@@ -138,6 +138,25 @@
           display: flex;
           flex-direction: column;
           gap: 2px;
+
+          select {
+            background-color: rgba(255, 255, 255, 0.671);
+
+            option {
+              transition: 0.2s ease-in-out;
+              cursor: pointer;
+              border-radius: 4px;
+            };
+            option:checked {
+              background-color: rgba(255, 255, 255, 0.542);
+            }
+            option:hover {
+              scale: 1.01;
+            }
+          }
+          select:hover {
+            background-color: rgba(255, 255, 255, 0.671);
+          }
         }
       }
 
