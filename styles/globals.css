@@ -12,9 +12,6 @@ a {
 
 body {
   box-sizing: border-box;
-  background-image: url(/cursodoimperio.png);
-  background-size: cover;
-  background-attachment: fixed;
   user-select: none;
   font-family: monospace;
   color: white;
@@ -22,6 +19,18 @@ body {
   @media (max-width: 600px) {
     margin-bottom: 70px;
   }
+}
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  background-image: url('/cursodoimperio.png');
+  background-size: cover;
+  background-position: top;
+  z-index: -1;
 }
 
 button {
