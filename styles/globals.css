@@ -15,6 +15,7 @@ body {
   user-select: none;
   font-family: monospace;
   color: white;
+  background-color: rgb(21, 21, 21);
 
   @media (max-width: 600px) {
     margin-bottom: 70px;
@@ -31,7 +32,6 @@ body::before {
   background-size: cover;
   background-position: top right;
   background-repeat: repeat;
-  background-color: rgb(37, 37, 37);
   z-index: -1;
 }
 
