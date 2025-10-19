@@ -7,6 +7,7 @@ import LoadingWheel from "./LoadingWheel";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import Form from "next/form";
+import ToggleSwitch from "./ToggleSwitch";
 
 function TabSelector({ selected, onSelect, guildId, guild }) {
   const tabs = ["Preferências", "Administração", "Cargos", "Inteligência Artificial", "Passagem de tempo", "Roleplay", "Diplomacia e NPCs", "Ações secretas", "Escolha de países"]
@@ -14,7 +15,7 @@ function TabSelector({ selected, onSelect, guildId, guild }) {
   const navRef = useRef(null);
 
   return (
-    <div className={styles.nav} ref={navRef}>
+    <div className={[styles.nav, styles.active].join(' ')} ref={navRef}>
       <section className={styles.guildInfo}>
         <Image src={guild.iconUrl} width={50} height={50} alt={`Ícone de ${guild.name}`} />
         <h1>{guild.name}</h1>
@@ -29,7 +30,7 @@ function TabSelector({ selected, onSelect, guildId, guild }) {
           {tab}
         </button>
       ))}
-      <HiChevronRight className={styles.mobileOpen} size={32} onClick={(ev) => {
+      <HiChevronRight className={[styles.mobileOpen, styles.rotated].join(' ')} size={32} onClick={(ev) => {
         navRef?.current?.classList.toggle(styles.active);
         ev.currentTarget.classList.toggle(styles.rotated)
       }} />
@@ -230,8 +231,9 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
         </div>
 
         <div className={styles.option}>
-          <label htmlFor="preferences.global_palpites">Responder jogadores com IA <input type="checkbox" name="preferences.global_palpites" id="preferences.global_palpites" defaultChecked={guild?.config?.server?.preferences?.global_palpites} /></label>
+          <label htmlFor="preferences.global_palpites">Responder jogadores com IA</label>
           <p>O Salazar responderá com IA a qualquer jogador que o mencionar, de forma similar ao comando /palpite. No entanto, ele usará um modelo mais fraco.</p>
+          <ToggleSwitch type="checkbox" name="preferences.global_palpites" id="preferences.global_palpites" defaultChecked={guild?.config?.server?.preferences?.global_palpites} />
         </div>
       </section>
 
