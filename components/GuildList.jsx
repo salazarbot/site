@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import LoadingWheel from "./LoadingWheel"
 import styles from "./GuildList.module.css"
 import Link from "next/link"
+import Tippy from "@tippyjs/react"
 
 export default function GuildList() {
   const [guilds, setGuilds] = useState(null)
@@ -28,21 +29,40 @@ export default function GuildList() {
   return (
     <ul className={styles.guildList}>
       {guilds
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .sort((a, b) => b.config - a.config)
-      .filter(g => (g.owner || g.isAdmin || g.manageGuild)).map(g => (
-        <Link key={g.id} className={`${!g.config && styles.disabled} ${styles.guild}`} href={g.config ? `/dashboard/${g.id}` : `https://discord.com/oauth2/authorize?client_id=767858186676994070`}>
-          {g.iconUrl ? (
-            <img src={g.iconUrl} className={styles.guildIcon} alt={`Ícone de ${g.name}`} width={32} height={32} />
-          ) : (
-            <span className={styles.guildIcon} />
-          )}
-          <span className={styles.guildInfo}>
-            <strong>{g.name}</strong>
-            {g.owner ? "Dono" : g.isAdmin ? "Administrador" : g.manageGuild ? "Gerente" : "Membro"}
-          </span>
-        </Link>
-      ))}
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a, b) => b.config - a.config)
+        .filter(g => (g.owner || g.isAdmin || g.manageGuild)).map(g => (
+          g.config ? <Link key={g.id} className={styles.guild} href={`/dashboard/${g.id}`}>
+            {g.iconUrl ? (
+              <img src={g.iconUrl} className={styles.guildIcon} alt={`Ícone de ${g.name}`} width={32} height={32} />
+            ) : (
+              <span className={styles.guildIcon} />
+            )}
+            <span className={styles.guildInfo}>
+              <strong>{g.name}{g.tier > 0 && ` - Plano nível ${g.tier}`}</strong>
+              {g.owner ? "Dono" : g.isAdmin ? "Administrador" : g.manageGuild ? "Gerente" : "Membro"}
+            </span>
+          </Link> :
+            <Tippy
+              animation="scale-extreme"
+              arrow={false}
+              trigger="mouseenter"
+              interactive={false}
+              content={"Clique para adicionar o Salazar"}
+            >
+              <Link key={g.id} className={[styles.guild, styles.disabled].join(' ')} href="https://discord.com/oauth2/authorize?client_id=767858186676994070">
+                {g.iconUrl ? (
+                  <img src={g.iconUrl} className={styles.guildIcon} alt={`Ícone de ${g.name}`} width={32} height={32} />
+                ) : (
+                  <span className={styles.guildIcon} />
+                )}
+                <span className={styles.guildInfo}>
+                  <strong>{g.name}{g.tier > 0 && ` - Plano nível ${g.tier}`}</strong>
+                  {g.owner ? "Dono" : g.isAdmin ? "Administrador" : g.manageGuild ? "Gerente" : "Membro"}
+                </span>
+              </Link>
+            </Tippy>
+        ))}
     </ul>
   )
 }

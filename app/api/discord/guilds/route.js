@@ -59,6 +59,7 @@ export async function GET(req) {
       manageGuild: !!(perms & (1 << 5)),
       config: configurationDb.some((server) => server.server_id == g.id),
       setup: setupDb.some((server) => server.server_id == g.id),
+      tier: configurationDb.find((server) => server.server_id == g.id)?.server_tier || setupDb.find((server) => server.server_id == g.id)?.server_tier || 0,
     }
 
     return guildObject;
