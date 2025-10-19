@@ -1,9 +1,6 @@
 .main {
   display: flex;
   flex-direction: column;
-  scroll-snap-type: y proximity;
-  max-height: 100dvh;
-  overflow-y: auto;
   max-width: 100dvw;
 
   .section {
