@@ -52,13 +52,14 @@
         justify-content: center;
         gap: 8px;
         backdrop-filter: blur(5px);
+        -webkit-user-drag: none;
       }
 
       a:hover {
-        scale: 1.08;
+        scale: 1.04;
       }
 
-      a:focus {
+      a:active {
         filter: brightness(150%);
       }
 
@@ -176,11 +177,12 @@
       border: 1px solid rgba(255, 255, 255, 0.194);
       transition: .2s ease-in-out;
       width: fit-content;
+      -webkit-user-drag: none;
     }
     a:hover {
       scale: 1.08;
     }
-    a:focus {
+    a:active {
       filter: brightness(150%);
     }
   }

@@ -45,11 +45,16 @@
     img:hover {
         scale: 1.04;
     }
+    img:active {
+        filter: brightness(150%);
+        -webkit-user-drag: none;
+    }
 
     .logo {
         display: flex;
         align-items: center;
         gap: 10px;
+        -webkit-user-drag: none;
 
         h1 {
             margin: 0;
@@ -76,6 +81,7 @@
 
         .section {
             transition: .2s ease-in-out;
+            -webkit-user-drag: none;
 
             @media (max-width: 600px) {
                 display: flex;
@@ -113,8 +119,9 @@
             }
         }
 
-        .section:focus {
+        .section:active, .section:focus {
             font-weight: 800;
+            filter: brightness(150%) !important;
         }
 
         .icon {
@@ -137,6 +144,11 @@
 
         img:hover {
             scale: 1.04;
+        }
+
+        img:active {
+            filter: brightness(150%);
+            -webkit-user-drag: none;
         }
 
         @media (max-width: 600px) {

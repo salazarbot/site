@@ -68,7 +68,7 @@ function sendForm(event, guildId, openPopup) {
         data[key] = value === '' ? undefined : Number(value);
       } else {
         // Se é um select/option com valor "undefined", marca como undefined
-        data[key] = value === 'undefined' ? undefined : value;
+        data[key] = value === 'undefined' || value === "" ? undefined : value;
       }
     }
   }
@@ -118,21 +118,20 @@ function sendForm(event, guildId, openPopup) {
     .then(result => {
       console.log('✅ Salvo:', result);
       openPopup('generic', {
-        hiddenFooter: true,
         data: {
           title: 'Sucesso!',
           message: 'Configurações salvas com sucesso.',
+          closeLabel: 'OK'
         }
       });
-      location.reload();
     })
     .catch((e) => {
       console.error('❌ Erro ao salvar:', e);
       openPopup('generic', {
-        hiddenFooter: true,
         data: {
           title: 'Erro ao salvar configurações',
           message: e?.toString() || 'Erro desconhecido',
+          closeLabel: 'OK'
         }
       });
     });

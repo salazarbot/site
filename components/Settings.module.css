@@ -44,6 +44,8 @@
         
         img {
           border-radius: 12px;
+          -webkit-user-drag: none;
+          border: 1px solid rgba(255, 255, 255, 0.162);
         }
       }
 
@@ -63,8 +65,9 @@
         border: 1px solid rgba(255, 255, 255, 0.145);
         text-decoration: underline;
       }
-      button:focus {
-        filter: brightness(150%);
+      button:active {
+        filter: brightness(150%) !important;
+        scale: 1.04;
       }
 
       .selected {
@@ -181,7 +184,7 @@
       .saveButton:hover {
         scale: 1.05;
       }
-      .saveButton:focus {
+      .saveButton:active {
         filter: brightness(150%);
       }
     }
