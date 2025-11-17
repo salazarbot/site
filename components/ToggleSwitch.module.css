@@ -7,6 +7,12 @@
     margin: 0;
     position: relative;
 }
+.toggleSwitch:hover {
+    scale: 1.04;
+}
+.toggleSwitch:focus {
+    filter: brightness(150%);
+}
 
 .toggleSwitch::before {
     transition: .2s ease-in-out;

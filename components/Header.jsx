@@ -100,7 +100,7 @@ export default function Header() {
             interactive={false}
             content={"Entrar com Discord"}
           >
-            <FaUser size={50} style={{ color: 'white', cursor: 'pointer', padding: '10px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.1)' }} onClick={() => signIn('discord')} />
+            <FaUser size={50} style={{ color: 'white', cursor: 'pointer', padding: '10px', borderRadius: '50%', border:"1px solid rgba(255, 255, 255, 0.165)", backgroundColor: 'rgba(255, 255, 255, 0.1)' }} onClick={() => signIn('discord')} />
           </Tippy>
         )}
       </nav>

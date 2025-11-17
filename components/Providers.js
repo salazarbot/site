@@ -2,6 +2,8 @@
 
 import { SessionProvider } from "next-auth/react";
 import { ProgressProvider } from '@bprogress/next/app';
+import { NtPopupProvider } from 'ntpopups';
+import 'ntpopups/dist/styles.css';
 
 export default function Providers({ children }) {
   return (
@@ -12,7 +14,9 @@ export default function Providers({ children }) {
         options={{ showSpinner: false }}
         shallowRouting
       >
-        {children}
+        <NtPopupProvider language="ptbr" theme="dark">
+          {children}
+        </NtPopupProvider>
       </ProgressProvider>
     </SessionProvider>
   );
