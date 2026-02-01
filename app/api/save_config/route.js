@@ -12,15 +12,24 @@ const client = new MongoClient(process.env.DB_URI, {
  * Converte números em strings para números reais
  */
 function parseValue(value) {
-  // Se for string numérica, converte para número
-  if (typeof value === 'string' && !isNaN(value) && value !== '') {
-    return Number(value);
-  }
-  // Se for array, processa cada item
-  if (Array.isArray(value)) {
-    return value.map(parseValue);
-  }
-  return value;
+    // Se for array, processa cada item
+    if (Array.isArray(value)) {
+        return value.map(parseValue);
+    }
+    // Se for string vazia, retorna undefined
+    if (typeof value === 'string' && value === '') {
+        return undefined;
+    }
+    // Se for string numérica, converte para número, exceto se for id de canal/role (mantém string)
+    // IDs do Discord são strings longas, normalmente >= 17 dígitos
+    if (typeof value === 'string' && !isNaN(value)) {
+        // Se for string só de dígitos e tiver 17 ou mais caracteres, provavelmente é um id do Discord
+        if (/^\d{17,}$/.test(value)) {
+            return value;
+        }
+        return Number(value);
+    }
+    return value;
 }
 
 /**
@@ -30,7 +39,32 @@ function buildUpdateQuery(config) {
   const updates = {};
   
   for (const [key, value] of Object.entries(config)) {
-    const parsedValue = parseValue(value);
+    let parsedValue = parseValue(value);
+    
+    // Garante que campos de múltiplos canais sempre sejam arrays de string
+        if ((key === 'channels.actions' || key === 'channels.events') && value !== null && value !== undefined) {
+            if (Array.isArray(parsedValue)) {
+                parsedValue = parsedValue.map(String);
+            } else if (typeof parsedValue === 'string' && parsedValue.trim() !== '') {
+                // Tenta parsear como JSON array
+                try {
+                    const arr = JSON.parse(parsedValue);
+                    if (Array.isArray(arr)) {
+                        parsedValue = arr.map(String);
+                    } else if (arr !== undefined && arr !== null) {
+                        parsedValue = [String(arr)];
+                    }
+                } catch {
+                    parsedValue = parsedValue.split(',').map(v => v.trim()).filter(v => v !== '');
+                }
+            } else if (parsedValue !== undefined && parsedValue !== null) {
+                parsedValue = [String(parsedValue)];
+            } else {
+                parsedValue = [];
+            }
+        } else {
+            parsedValue = parseValue(value);
+        }
     
     // Usa dot notation: server.channels.staff, server.preferences.action_timing, etc
     updates[`server.${key}`] = parsedValue;

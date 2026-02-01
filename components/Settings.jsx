@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import Select from 'react-select';
 import styles from "./Settings.module.css"
 import { HiChevronRight } from "react-icons/hi";
 import LoadingWheel from "./LoadingWheel";
@@ -49,55 +50,79 @@ function sendForm(event, guildId, openPopup) {
   const data = {};
   const form = event.currentTarget;
 
-  // Processa todos os campos do formulário
-  for (const [key, value] of formData.entries()) {
-    // Se a chave já existe, transforma em array (para selects múltiplos)
-    if (data[key]) {
-      if (Array.isArray(data[key])) {
-        data[key].push(value);
-      } else {
-        data[key] = [data[key], value];
+  // Processa todos os campos do formulário diretamente (mais previsível que FormData para nossos hidden inputs)
+  const elements = Array.from(form.querySelectorAll('input[name], textarea[name], select[name]'));
+
+  for (const el of elements) {
+    const name = el.name;
+    if (!name) continue;
+
+    // Hidden inputs usados pelos react-select múltiplos
+    if (el.type === 'hidden' && (name === 'channels.actions' || name === 'channels.events')) {
+      const raw = el.value;
+      let arr = [];
+      if (typeof raw === 'string' && raw.trim() !== '') {
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) arr = parsed.map(String).filter(v => v !== '');
+          else arr = [String(parsed)];
+        } catch {
+          arr = raw.split(',').map(v => v.trim()).filter(v => v !== '');
+        }
       }
-    } else {
-      // Obtém o elemento do formulário para verificar seu tipo
-      const element = form.elements.namedItem(key);
-      
-      // Se é um input type="number", converte para número
-      if (element && element.type === 'number') {
-        // Aceita 0 como valor válido, apenas empty string é undefined
-        data[key] = value === '' ? undefined : Number(value);
-      } else {
-        // Se é um select/option com valor "undefined", marca como undefined
-        data[key] = value === 'undefined' || value === "" ? undefined : value;
-      }
+      // Sempre envie array, nunca null
+      data[name] = Array.isArray(arr) ? arr : [];
+      continue;
     }
+
+    // Checkboxes
+    if (el.type === 'checkbox') {
+      data[name] = el.checked;
+      continue;
+    }
+
+    // Select múltiplo nativo
+    if (el.tagName === 'SELECT' && el.multiple) {
+      const vals = Array.from(el.selectedOptions).map(o => o.value).filter(v => v !== '');
+      data[name] = vals.map(String);
+      continue;
+    }
+
+    // Número
+    if (el.type === 'number') {
+      data[name] = el.value === '' ? undefined : Number(el.value);
+      continue;
+    }
+
+    // Text/textarea
+    if (el.tagName === 'TEXTAREA' || el.type === 'text' || el.type === 'search') {
+      data[name] = el.value;
+      continue;
+    }
+
+    // Select simples
+    if (el.tagName === 'SELECT') {
+      data[name] = el.value === 'undefined' || el.value === '' ? undefined : el.value;
+      continue;
+    }
+
+    // Fallback
+    data[name] = el.value;
   }
 
-  // Processa checkboxes: converte "on" para true, ausentes para false
-  const checkboxes = form.querySelectorAll('input[type="checkbox"]');
-  
-  checkboxes.forEach(checkbox => {
-    if (checkbox.name) {
-      data[checkbox.name] = checkbox.checked; // true ou false
+  // Processa campos que devem ser apagados: se o elemento tem um valor anterior, mas agora está ausente/ vazio
+  for (const el of elements) {
+    if (!el.name) continue;
+    if (el.type === 'checkbox') continue;
+    const name = el.name;
+    const prevHasValue = el.defaultValue || el.hasAttribute('data-has-value');
+    const current = data[name];
+    const isEmptyArray = Array.isArray(current) && current.length === 0;
+    // Nunca envie null para actions/events, sempre array
+    if ((current === undefined || current === '' || (isEmptyArray && name !== 'channels.actions' && name !== 'channels.events')) && prevHasValue) {
+      data[name] = null;
     }
-  });
-
-  // Processa campos undefined: marca com null para serem apagados no backend
-  const formElements = form.querySelectorAll('input, textarea, select');
-  
-  formElements.forEach(element => {
-    if (!element.name) return;
-    
-    const fieldName = element.name;
-    
-    // Se o campo não está no formData e não é checkbox (checkboxes já foram processados)
-    if (!formData.has(fieldName) && element.type !== 'checkbox') {
-      // Se o campo tem um valor anterior (defaultValue/defaultChecked), marca como null para apagar
-      if (element.defaultValue || element.hasAttribute('data-has-value')) {
-        data[fieldName] = null;
-      }
-    }
-  });
+  }
 
   console.log('📤 Dados a enviar:', data);
 
@@ -140,6 +165,33 @@ function sendForm(event, guildId, openPopup) {
 function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }) {
 
   const { openPopup } = useNtPopups();
+  const actionsInputRef = useRef(null);
+  const eventsInputRef = useRef(null);
+
+  // Sincroniza os hidden inputs com os dados iniciais
+  useEffect(() => {
+    // extrai arrays robustamente (aceita JSON string, CSV string ou array)
+    const normalize = (v) => {
+      if (Array.isArray(v)) return v.map(String);
+      if (typeof v === 'string') {
+        try {
+          const parsed = JSON.parse(v);
+          if (Array.isArray(parsed)) return parsed.map(String);
+        } catch {}
+        return v.split(',').map(s => s.trim()).filter(s => s !== '');
+      }
+      return [];
+    };
+
+    if (actionsInputRef.current) {
+      const arr = normalize(guild?.config?.server?.channels?.actions);
+      actionsInputRef.current.value = JSON.stringify(arr);
+    }
+    if (eventsInputRef.current) {
+      const arr = normalize(guild?.config?.server?.channels?.events);
+      eventsInputRef.current.value = JSON.stringify(arr);
+    }
+  }, [guild]);
 
   const pages = {
     "Preferências": <Form className={styles.config} key={'preferencias'} onSubmit={(e) => sendForm(e, guildId, openPopup)}>
@@ -315,21 +367,176 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
         <div className={styles.option}>
           <label htmlFor="channels.actions">Canais de ações</label>
           <p>Todos os canais de ações, onde os jogadores enviam ações para que sejam narradas.</p>
-          <select style={{ minHeight: '100px' }} name="channels.actions" id="channels.actions" multiple required>
-            {guildChannels.filter(c => c.type == 0 || c.type == 4 || c.type == 5 || c.type == 15).map(c => {
-              return <option key={c.id} value={c.id} selected={guild?.config?.server?.channels?.actions?.includes(c.id)}>{c.name}</option>
-            })}
-          </select>
+          <Select
+            inputId="channels.actions"
+            isMulti
+            options={guildChannels.filter(c => c.type == 0 || c.type == 4 || c.type == 5 || c.type == 15).map(c => ({ value: String(c.id), label: c.name }))}
+            defaultValue={(() => {
+              const actionsRaw = guild?.config?.server?.channels?.actions;
+              let actionsArray = [];
+              if (Array.isArray(actionsRaw)) actionsArray = actionsRaw.map(String);
+              else if (typeof actionsRaw === 'string') {
+                try {
+                  const parsed = JSON.parse(actionsRaw);
+                  if (Array.isArray(parsed)) actionsArray = parsed.map(String);
+                  else actionsArray = [String(parsed)];
+                } catch {
+                  actionsArray = actionsRaw.split(',').map(s => s.trim()).filter(s => s !== '');
+                }
+              }
+              const opts = guildChannels.filter(c => c.type == 0 || c.type == 4 || c.type == 5 || c.type == 15).map(c => ({ value: String(c.id), label: c.name }));
+              return opts.filter(o => actionsArray.includes(o.value));
+            })()}
+            onChange={selected => {
+              if (actionsInputRef.current) {
+                actionsInputRef.current.value = JSON.stringify(selected ? selected.map(opt => String(opt.value)) : []);
+                actionsInputRef.current.dispatchEvent(new Event('input', { bubbles: true }));
+              }
+            }}
+            classNamePrefix="react-select"
+            styles={{
+              control: (base, state) => ({
+                ...base,
+                borderRadius: '12px',
+                border: '1px solid rgba(255,255,255,0.286)',
+                backgroundColor: state.isFocused ? 'white' : 'rgba(255,255,255,0.671)',
+                boxShadow: 'none',
+                minHeight: '48px',
+                fontSize: '16px',
+                cursor: 'pointer',
+                transition: '0.2s ease-in-out',
+              }),
+              menu: base => ({ ...base, zIndex: 9999, borderRadius: '12px', fontSize: '16px' }),
+              option: (base, state) => ({
+                ...base,
+                backgroundColor: state.isSelected
+                  ? 'rgba(255,255,255,0.542)'
+                  : state.isFocused
+                  ? 'rgba(255,255,255,0.671)'
+                  : 'rgba(255,255,255,0.671)',
+                color: 'black',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                transition: '0.2s ease-in-out',
+              }),
+              multiValue: base => ({
+                ...base,
+                backgroundColor: 'rgba(19,173,19,0.15)',
+                borderRadius: '8px',
+                color: 'black',
+              }),
+              multiValueLabel: base => ({
+                ...base,
+                color: 'black',
+                fontWeight: 600,
+              }),
+              multiValueRemove: base => ({
+                ...base,
+                color: 'black',
+                ':hover': {
+                  backgroundColor: 'rgba(19,173,19,0.3)',
+                  color: 'black',
+                },
+              }),
+              placeholder: base => ({
+                ...base,
+                color: 'rgba(0,0,0,0.5)',
+              }),
+              input: base => ({
+                ...base,
+                color: 'black',
+              }),
+            }}
+          />
+          {/* Hidden input para enviar no form */}
+          <input type="hidden" name="channels.actions" id="channels.actions" ref={actionsInputRef} defaultValue="[]" />
         </div>
 
         <div className={styles.option}>
           <label htmlFor="channels.events">Canais de eventos</label>
           <p>Todos os canais de eventos, onde os administradores enviam acontecimentos do roleplay. O Salazar precisa saber esses canais para poder registrar eventos na sua memória.</p>
-          <select style={{ minHeight: '100px' }} name="channels.events" id="channels.events" multiple required>
-            {guildChannels.filter(c => c.type == 0 || c.type == 4 || c.type == 5 || c.type == 15).map(c => {
-              return <option key={c.id} value={c.id} selected={guild?.config?.server?.channels?.events?.includes(c.id)}>{c.name}</option>
-            })}
-          </select>
+          <Select
+            inputId="channels.events"
+            isMulti
+            options={guildChannels.filter(c => c.type == 0 || c.type == 4 || c.type == 5 || c.type == 15).map(c => ({ value: String(c.id), label: c.name }))}
+            defaultValue={(() => {
+              const eventsRaw = guild?.config?.server?.channels?.events;
+              let eventsArray = [];
+              if (Array.isArray(eventsRaw)) eventsArray = eventsRaw.map(String);
+              else if (typeof eventsRaw === 'string') {
+                try {
+                  const parsed = JSON.parse(eventsRaw);
+                  if (Array.isArray(parsed)) eventsArray = parsed.map(String);
+                  else eventsArray = [String(parsed)];
+                } catch {
+                  eventsArray = eventsRaw.split(',').map(s => s.trim()).filter(s => s !== '');
+                }
+              }
+              const opts = guildChannels.filter(c => c.type == 0 || c.type == 4 || c.type == 5 || c.type == 15).map(c => ({ value: String(c.id), label: c.name }));
+              return opts.filter(o => eventsArray.includes(o.value));
+            })()}
+            onChange={selected => {
+              if (eventsInputRef.current) {
+                eventsInputRef.current.value = JSON.stringify(selected ? selected.map(opt => String(opt.value)) : []);
+                eventsInputRef.current.dispatchEvent(new Event('input', { bubbles: true }));
+              }
+            }}
+            classNamePrefix="react-select"
+            styles={{
+              control: (base, state) => ({
+                ...base,
+                borderRadius: '12px',
+                border: '1px solid rgba(255,255,255,0.286)',
+                backgroundColor: state.isFocused ? 'white' : 'rgba(255,255,255,0.671)',
+                boxShadow: 'none',
+                minHeight: '48px',
+                fontSize: '16px',
+                cursor: 'pointer',
+                transition: '0.2s ease-in-out',
+              }),
+              menu: base => ({ ...base, zIndex: 9999, borderRadius: '12px', fontSize: '16px' }),
+              option: (base, state) => ({
+                ...base,
+                backgroundColor: state.isSelected
+                  ? 'rgba(255,255,255,0.542)'
+                  : state.isFocused
+                  ? 'rgba(255,255,255,0.671)'
+                  : 'rgba(255,255,255,0.671)',
+                color: 'black',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                transition: '0.2s ease-in-out',
+              }),
+              multiValue: base => ({
+                ...base,
+                backgroundColor: 'rgba(19,173,19,0.15)',
+                borderRadius: '8px',
+                color: 'black',
+              }),
+              multiValueLabel: base => ({
+                ...base,
+                color: 'black',
+                fontWeight: 600,
+              }),
+              multiValueRemove: base => ({
+                ...base,
+                color: 'black',
+                ':hover': {
+                  backgroundColor: 'rgba(19,173,19,0.3)',
+                  color: 'black',
+                },
+              }),
+              placeholder: base => ({
+                ...base,
+                color: 'rgba(0,0,0,0.5)',
+              }),
+              input: base => ({
+                ...base,
+                color: 'black',
+              }),
+            }}
+          />
+          <input type="hidden" name="channels.events" id="channels.events" ref={eventsInputRef} defaultValue="[]" />
         </div>
 
         <div className={styles.option}>
@@ -348,7 +555,7 @@ function SettingsContent({ selected, guildId, guild, guildChannels, guildRoles }
           <select name="channels.war" id="channels.war" defaultValue={guild?.config?.server?.channels?.war || 'undefined'} required>
             <option value="undefined">Nenhum canal</option>
             {guildChannels.filter(c => c.type == 15).map(c => {
-              return <option key={c.id} value={c.id}>{c.name}</option>
+              return <option key={c.id} value={c.id} defaultChecked={c.id == guild?.config?.server?.channels?.war}>{c.name}</option>
             })}
           </select>
         </div>
