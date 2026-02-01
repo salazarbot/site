@@ -5,7 +5,7 @@ import LoadingWheel from "./LoadingWheel"
 import styles from "./GuildList.module.css"
 import Link from "next/link"
 import Tippy from "@tippyjs/react"
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 
 export default function GuildList() {
   const [guilds, setGuilds] = useState(null)
@@ -26,6 +26,9 @@ export default function GuildList() {
 
   if (err) {
     if(err.error === "Not authenticated") {
+      signIn('discord')
+    } else if (err.error === "Discord API error") {
+      signOut();
       signIn('discord')
     } else {
       return <div>Erro: {JSON.stringify(err)}</div>
