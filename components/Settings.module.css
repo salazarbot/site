@@ -34,7 +34,7 @@
       position: sticky;
       top: 74px;
       max-height: calc(100dvh - 74px);
-      overflow: scroll;
+      overflow: hidden;
       z-index: 1;
 
       .guildInfo {
@@ -125,11 +125,11 @@
         padding: 8px;
         transition: 0.2s ease-in-out;
         font-size: 16px !important;
+        cursor: text;
       }
       input:hover, textarea:hover, select:hover {
         background-color: white;
         scale: 1.01;
-        cursor: pointer;
       }
       input:active, textarea:active, select:active {
         filter: brightness(150%);
