@@ -40,7 +40,7 @@ export default function GuildList() {
       {Array.from({ length: 40 }, (_, index) => (
         <div className={styles.guild}>
           <span className={[styles.guildIcon, styles.placeholder].join(' ')} />
-          <span className={styles.guildInfo}>
+          <span className={styles.guildInfo} style={{gap: "4px"}}>
             <strong><div className={styles.placeholder} /></strong>
             <div className={styles.placeholder} />
           </span>
