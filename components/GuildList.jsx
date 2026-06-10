@@ -35,7 +35,19 @@ export default function GuildList() {
     }
   }
   
-  if (!guilds) return <LoadingWheel />
+  if (!guilds) return (
+    <ul className={styles.guildList}>
+      {Array.from({ length: 40 }, (_, index) => (
+        <div className={styles.guild}>
+          <span className={[styles.guildIcon, styles.placeholder].join(' ')} />
+          <span className={styles.guildInfo}>
+            <strong><div className={styles.placeholder} /></strong>
+            <div className={styles.placeholder} />
+          </span>
+        </div>
+      ))}
+    </ul>
+  )
 
   return (
     <ul className={styles.guildList}>
