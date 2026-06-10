@@ -3,4 +3,10 @@
   display: flex;
   gap: 20px;
   flex-direction: column;
+  height: 80dvh;
+  max-height: fit-content;
+
+  @media (max-width: 600px) {
+    height: unset;
+  }
 }

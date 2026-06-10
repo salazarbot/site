@@ -11,6 +11,7 @@ import Form from "next/form";
 import ToggleSwitch from "./ToggleSwitch";
 import useNtPopups from 'ntpopups';
 import { CiCircleRemove } from "react-icons/ci";
+import Link from "next/link";
 
 function TabSelector({ selected, onSelect, guildId, guild }) {
   const tabs = ["Preferências", "Administração", "Cargos", "Inteligência Artificial", "Passagem de tempo", "Roleplay", "Diplomacia e NPCs", "Ações secretas", "Escolha de países"]
@@ -764,6 +765,7 @@ export default function Settings({ guildId }) {
       <div className={styles.error}>
         <CiCircleRemove width={50} height={50} />
         <span>{error.message}</span>
+        <Link href="/dashboard" className={styles.backLink}>Voltar à Dashboard</Link>
       </div>
     ) 
   }
@@ -774,6 +776,7 @@ export default function Settings({ guildId }) {
       <div className={styles.error}>
         <CiCircleRemove width={50} height={50} />
         <span>Dados não encontrados</span>
+        <Link href="/dashboard" className={styles.backLink}>Voltar à Dashboard</Link>
       </div>
     )
   }

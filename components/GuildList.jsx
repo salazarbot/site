@@ -6,6 +6,7 @@ import styles from "./GuildList.module.css"
 import Link from "next/link"
 import Tippy from "@tippyjs/react"
 import { signIn, signOut } from "next-auth/react";
+import { CiCircleRemove } from "react-icons/ci"
 
 export default function GuildList() {
   const [guilds, setGuilds] = useState(null)
@@ -31,7 +32,13 @@ export default function GuildList() {
       signOut();
       signIn('discord')
     } else {
-      return <div>Erro: {JSON.stringify(err)}</div>
+      return (
+        <div className={styles.error}>
+          <CiCircleRemove width={50} height={50} />
+          <span>{err?.message || `Erro: ${JSON.stringify(err)}`}</span>
+          <Link href="/" className={styles.backLink}>Voltar ao Início</Link>
+        </div>
+      )
     }
   }
   
