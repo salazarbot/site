@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import Form from "next/form";
 import ToggleSwitch from "./ToggleSwitch";
 import useNtPopups from 'ntpopups';
+import { CiCircleRemove } from "react-icons/ci";
 
 function TabSelector({ selected, onSelect, guildId, guild }) {
   const tabs = ["Preferências", "Administração", "Cargos", "Inteligência Artificial", "Passagem de tempo", "Roleplay", "Diplomacia e NPCs", "Ações secretas", "Escolha de países"]
@@ -22,9 +23,13 @@ function TabSelector({ selected, onSelect, guildId, guild }) {
         {guild?.iconUrl ? (
           <Image className={styles.guildIcon} src={guild.iconUrl} width={50} height={50} alt={`Ícone de ${guild.name}`} />
         ) : (
-          <span className={styles.guildIcon} width={50} height={50} />
+          <span className={[styles.guildIcon, "skeleton"].join(' ')} width={50} height={50} />
         )}
-        <h1>{guild?.name || "Guild Name"}</h1>
+        {guild?.name ? (
+          <h1>{guild.name}</h1>
+        ) : (
+          <h1 className={[styles.placeholder, "skeleton"].join(' ')} />
+        )}
       </section>
 
       {tabs.map(tab => (
@@ -745,22 +750,32 @@ export default function Settings({ guildId }) {
 
   // Use o estado de loading ao invés de checar as variáveis
   if (loading) {
-    return <div className={styles.loading}><LoadingWheel /></div>
+    return (
+      <div className={styles.dashboard}>
+        <TabSelector selected={selectedTab} onSelect={setSelectedTab} guildId={null} guild={null} />
+        <div className={styles.loading}><LoadingWheel /></div>
+      </div>
+    ) 
   }
 
   // Mostre erro se houver
   if (error) {
     return (
-      <div className={styles.dashboard}>
-        <TabSelector selected={selectedTab} onSelect={setSelectedTab} guildId={null} guild={null} />
-        <div className={styles.error}>Erro: {error.message}</div>
+      <div className={styles.error}>
+        <CiCircleRemove width={50} height={50} />
+        <span>{error.message}</span>
       </div>
     ) 
   }
 
   // Mostre mensagem se não encontrou os dados
   if (!guild || !guildChannels || !guildRoles) {
-    return <div className={styles.error}>Dados não encontrados</div>
+    return (
+      <div className={styles.error}>
+        <CiCircleRemove width={50} height={50} />
+        <span>Dados não encontrados</span>
+      </div>
+    )
   }
 
   return (
