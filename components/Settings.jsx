@@ -19,8 +19,12 @@ function TabSelector({ selected, onSelect, guildId, guild }) {
   return (
     <div className={[styles.nav, styles.active].join(' ')} ref={navRef}>
       <section className={styles.guildInfo}>
-        <Image src={guild.iconUrl} width={50} height={50} alt={`Ícone de ${guild.name}`} />
-        <h1>{guild.name}</h1>
+        {guild?.iconUrl ? (
+          <Image className={styles.guildIcon} src={guild.iconUrl} width={50} height={50} alt={`Ícone de ${guild.name}`} />
+        ) : (
+          <span className={styles.guildIcon} width={50} height={50} />
+        )}
+        <h1>{guild?.name || "Guild Name"}</h1>
       </section>
 
       {tabs.map(tab => (
@@ -746,7 +750,12 @@ export default function Settings({ guildId }) {
 
   // Mostre erro se houver
   if (error) {
-    return <div className={styles.error}>Erro: {error.message}</div>
+    return (
+      <div className={styles.dashboard}>
+        <TabSelector selected={selectedTab} onSelect={setSelectedTab} guildId={null} guild={null} />
+        <div className={styles.error}>Erro: {error.message}</div>
+      </div>
+    ) 
   }
 
   // Mostre mensagem se não encontrou os dados

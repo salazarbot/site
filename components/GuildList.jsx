@@ -39,10 +39,10 @@ export default function GuildList() {
     <ul className={styles.guildList}>
       {Array.from({ length: 40 }, (_, index) => (
         <div className={styles.guild}>
-          <span className={[styles.guildIcon, styles.placeholder].join(' ')} />
+          <span className={[styles.guildIcon, styles.placeholder, "skeleton"].join(' ')} />
           <span className={styles.guildInfo} style={{gap: "4px"}}>
-            <strong><div className={styles.placeholder} /></strong>
-            <div className={styles.placeholder} />
+            <strong><div className={[styles.placeholder, "skeleton"].join(' ')} /></strong>
+            <div className={[styles.placeholder, "skeleton"].join(' ')} />
           </span>
         </div>
       ))}
