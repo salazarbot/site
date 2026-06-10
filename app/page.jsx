@@ -11,6 +11,7 @@ import { SlSpeech } from "react-icons/sl";
 import { FaHourglass } from "react-icons/fa6";
 import { TbSpy } from "react-icons/tb";
 import { GoPeople } from "react-icons/go";
+import ToggleSwitch from "@/components/ToggleSwitch";
 
 
 export default function Home() {
@@ -27,6 +28,7 @@ export default function Home() {
           </div>
           <div className={styles.description}>
             <p>O Salazar automatiza narrações, gerencia países, simula diplomacia e cria um mundo vivo para seus roleplays geopolíticos no Discord.</p>
+            <ToggleSwitch type="checkbox" name="preferences.global_palpites" id="preferences.global_palpites" defaultChecked={true} />
           </div>
           <div className={styles.buttons}>
             <Link href="https://discord.com/oauth2/authorize?client_id=767858186676994070" target="_blank" className={styles.primary}><RiRobot2Fill /> Adicionar!</Link>
