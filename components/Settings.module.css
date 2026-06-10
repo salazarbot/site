@@ -24,6 +24,10 @@
     font-size: 18px;
     font-weight: 500;
   }
+
+  @media (max-width: 600px) {
+    height: 100dvh;
+  }
 }
 
 .dashboard {
@@ -92,7 +96,6 @@
       button:hover {
         background: rgba(255, 255, 255, 0.208);
         border: 1px solid rgba(255, 255, 255, 0.145);
-        text-decoration: underline;
       }
       button:active {
         filter: brightness(150%) !important;
