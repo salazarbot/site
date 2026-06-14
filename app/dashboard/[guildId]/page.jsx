@@ -1,13 +1,28 @@
 import Header from "@/components/Header";
 import styles from "./page.module.css";
 import Settings from "@/components/Settings";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../lib/auth";
 
 export async function generateMetadata({ params }) {
   const { guildId } = await params;
   
   try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.accessToken) {
+      return {
+        title: 'Dashboard',
+        description: 'Dashboard do Salazar',
+      };
+    }
+    
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
-    const res = await fetch(`${baseUrl}/api/discord/guild?id=${guildId}`);
+    const res = await fetch(`${baseUrl}/api/discord/guild?id=${guildId}`, {
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+    });
     
     if (!res.ok) {
       throw new Error(`API error: ${res.status}`);
@@ -15,9 +30,7 @@ export async function generateMetadata({ params }) {
     
     const guild = await res.json();
     
-    console.log('Guild response:', guild);
-    
-    const guildName = guild?.name || guild?.server?.name || 'Servidor';
+    const guildName = guild?.name || 'Servidor';
 
     return {
       title: `Dashboard de ${guildName}`,
