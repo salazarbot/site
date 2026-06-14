@@ -5,7 +5,8 @@ import Settings from "@/components/Settings";
 export async function generateMetadata({ params }) {
   const { guildId } = await params;
   
-  const guild = await fetch(`/api/discord/guild?id=${guildId}`).then((res) => res.json());
+  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+  const guild = await fetch(`${baseUrl}/api/discord/guild?id=${guildId}`).then((res) => res.json());
 
   return {
     title: `Dashboard de ${guild.name}`,
