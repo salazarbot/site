@@ -5,35 +5,16 @@ import Settings from "@/components/Settings";
 export async function generateMetadata({ params }) {
   const { guildId } = await params;
   
-  try {
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
-    const res = await fetch(`${baseUrl}/api/discord/guild?id=${guildId}`);
-    
-    if (!res.ok) {
-      throw new Error(`API error: ${res.status}`);
-    }
-    
-    const guild = await res.json();
-    
-    console.log('Guild response:', guild);
-    
-    const guildName = guild?.name || guild?.server?.name || 'Servidor';
+  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+  const guild = await fetch(`${baseUrl}/api/discord/guild?id=${guildId}`).then((res) => res.json());
 
-    return {
-      title: `Dashboard de ${guildName}`,
-      description: `Configurações e informações do servidor ${guildName} no Salazar.`,
-      openGraph: {
-        images: guild?.iconUrl ? [guild.iconUrl] : [],
-      },
-    };
-  } catch (error) {
-    console.error('Error fetching guild metadata:', error);
-    
-    return {
-      title: 'Dashboard',
-      description: 'Dashboard do Salazar',
-    };
-  }
+  return {
+    title: `Dashboard de ${guild.name}`,
+    description: `Configurações e informações do servidor ${guild.name} no Salazar.`,
+    openGraph: {
+      images: [guild.iconUrl],
+    },
+  };
 }
 
 export default async function Dashboard({ params }) {
